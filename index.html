@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fort Mart - Modern E-Commerce & Admin Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#0066FF',
+                        brandGreen: '#00CC66',
+                        brandDark: '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #0066FF 0%, #00CC66 100%);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0066FF 0%, #00CC66 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes toastIn {
+            from { transform: translateY(100%) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .animate-toast {
+            animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen custom-scrollbar">
+
+    <!-- Top Announcement Bar -->
+    <div class="gradient-bg text-white text-xs sm:text-sm py-2 px-4 text-center font-medium flex justify-between items-center">
+        <span class="hidden md:inline">⚡ FREE nationwide delivery on orders above ₦100,000![cite: 1]</span>
+        <span class="mx-auto md:mx-0">🎁 Earn 10 Loyalty Points for every ₦1,000 spent![cite: 1]</span>
+        <div class="flex items-center gap-4">
+            <!-- Currency Switcher -->
+            <div class="flex items-center gap-1 bg-white/25 backdrop-blur-md px-2 py-0.5 rounded text-white text-xs">
+                <i class="fa-solid me-1 fa-coins"></i>
+                <select id="currencySelect" onchange="changeCurrency(this.value)" class="bg-transparent text-white focus:outline-none cursor-pointer">
+                    <option value="NGN" class="text-slate-900">NGN (₦)</option>
+                    <option value="USD" class="text-slate-900">USD ($)</option>
+                    <option value="GBP" class="text-slate-900">GBP (£)</option>
+                    <option value="EUR" class="text-slate-900">EUR (€)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+            <!-- Brand Logo -->
+            <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+                    FM
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900">FORT<span class="gradient-text">MART</span></span>
+                    <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider -mt-1">Direct Store</span>
+                </div>
+            </a>
+
+            <!-- Search Bar with Live Autocomplete -->
+            <div class="flex-1 max-w-xl relative hidden md:block">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Search 5,000+ premium products...[cite: 1]" 
+                        oninput="handleSearchInput(this.value)"
+                        onfocus="showSearchDropdown()"
+                        class="w-full bg-slate-100 text-slate-800 text-sm rounded-xl pl-10 pr-10 py-2.5 border border-transparent focus:border-brandBlue focus:bg-white focus:outline-none transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400"></i>
+                    <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-3.5 top-3 text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <!-- Autocomplete Dropdown -->
+                <div id="searchDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-slate-100 max-h-80 overflow-y-auto z-50 p-2 custom-scrollbar">
+                    <!-- Dynamic suggestions populated here -->
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-3">
+                <!-- Order Lookup -->
+                <button onclick="openOrderLookupModal()" class="p-2 text-slate-600 hover:text-brandBlue hover:bg-slate-100 rounded-lg transition" title="Track Order">
+                    <i class="fa-solid fa-truck-fast text-lg"></i>
+                </button>
+
+                <!-- Admin Link -->
+                <button onclick="navigateTo('admin')" class="p-2 text-slate-600 hover:text-brandBlue hover:bg-slate-100 rounded-lg transition" title="Admin Portal">
+                    <i class="fa-solid fa-user-gear text-lg"></i>
+                </button>
+
+                <!-- Auth / Profile -->
+                <div id="userHeaderArea">
+                    <button onclick="openAuthModal()" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-xl text-sm transition">
+                        <i class="fa-regular fa-circle-user text-base"></i>
+                        <span class="hidden sm:inline">Sign In</span>
+                    </button>
+                </div>
+
+                <!-- Shopping Cart Toggle -->
+                <button onclick="toggleCartDrawer(true)" class="relative bg-brandBlue hover:bg-blue-700 text-white p-2.5 sm:px-4 sm:py-2.5 rounded-xl font-semibold flex items-center gap-2 transition shadow-md shadow-blue-500/20">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span class="hidden sm:inline text-sm">Cart</span>
+                    <span id="cartBadgeCount" class="bg-brandGreen text-slate-900 font-bold text-xs px-2 py-0.5 rounded-full">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Input -->
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative">
+                <input type="text" placeholder="Search products..." oninput="handleSearchInput(this.value)" class="w-full bg-slate-100 text-sm rounded-xl pl-9 pr-4 py-2 border border-slate-200 focus:outline-none">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Dynamic Router Views Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- VIEW: SHOP CATALOG / HOME -->
+        <section id="view-home" class="space-y-6">
+            <!-- Hero Banner Slider -->
+            <div class="relative rounded-3xl overflow-hidden gradient-bg text-white p-6 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="space-y-4 max-w-xl text-center md:text-left z-10">
+                    <span class="inline-block bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">New Season Stock</span>
+                    <h1 class="text-3xl sm:text-5xl font-black leading-tight tracking-tight">Upgrade Your Tech & Lifestyle Essentials.</h1>
+                    <p class="text-blue-100 text-sm sm:text-base">Shop verified gadgets, fashion, and accessories with instant checkout, loyalty rewards, and ultra-fast delivery nationwide.</p>
+                    <div class="pt-2 flex flex-wrap gap-3 justify-center md:justify-start">
+                        <a href="#catalog" class="bg-white text-brandBlue font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-slate-100 transition">Shop Featured</a>
+                        <button onclick="navigateTo('loyalty')" class="bg-brandGreen text-slate-900 font-bold px-6 py-3 rounded-xl shadow-lg hover:bg-emerald-400 transition">View Loyalty Perks</button>
+                    </div>
+                </div>
+                <div class="relative w-full max-w-xs md:max-w-md flex justify-center">
+                    <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-white/10 backdrop-blur-xl absolute -top-4 blur-xl"></div>
+                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80" alt="Featured Product" class="relative z-10 rounded-2xl shadow-2xl object-cover h-64 w-64 sm:h-80 sm:w-80 border-4 border-white/20 transform hover:rotate-2 transition duration-500">
+                </div>
+            </div>
+
+            <!-- Controls: Category Pills & Fixed Sorting & Filters -->
+            <div id="catalog" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                <!-- Categories Bar -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 custom-scrollbar flex-1" id="categoryPillContainer">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Sort Dropdown -->
+                <div class="flex items-center gap-3 min-w-max border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
+                    <label for="sortSelect" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Sort By:</label>
+                    <select id="sortSelect" onchange="handleSortChange(this.value)" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brandBlue transition">
+                        <option value="default">Featured / Default</option>
+                        <option value="price-low-high">Price: Low to High</option>
+                        <option value="price-high-low">Price: High to Low</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="name-asc">Name: A to Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span id="activeCategoryTitle">All Products</span>
+                        <span id="productCountBadge" class="text-xs bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-full">0</span>
+                    </h2>
+                </div>
+                <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Dynamically rendered cards -->
+                </div>
+                <div id="noProductsFound" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200">
+                    <i class="fa-solid fa-box-open text-5xl text-slate-300 mb-3"></i>
+                    <h3 class="text-lg font-bold text-slate-700">No products match your selection</h3>
+                    <p class="text-slate-500 text-sm mt-1">Try clearing your search query or picking a different category filter.</p>
+                    <button onclick="resetFilters()" class="mt-4 bg-brandBlue text-white text-xs font-bold px-4 py-2 rounded-xl">Reset Filters</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: USER PROFILE & HISTORY -->
+        <section id="view-profile" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl gradient-bg text-white font-black text-2xl flex items-center justify-center shadow-lg" id="profileAvatar">
+                        U
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900" id="profileName">User Profile</h2>
+                        <p class="text-slate-500 text-sm" id="profileEmail">user@example.com</p>
+                    </div>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl flex items-center gap-4">
+                    <div class="p-3 bg-emerald-500 text-white rounded-xl">
+                        <i class="fa-solid fa-crown text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs uppercase tracking-wider font-bold text-emerald-600">Loyalty Balance</span>
+                        <div class="text-2xl font-black text-emerald-700"><span id="profileLoyaltyPoints">0</span> <span class="text-xs font-normal">pts</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Saved Addresses -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-brandBlue"></i> Delivery Address
+                    </h3>
+                    <form id="addressBookForm" onsubmit="saveUserAddress(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">State / City</label>
+                            <select id="userAddrState" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium focus:outline-none">
+                                <option value="Lagos">Lagos</option>
+                                <option value="Abuja">Abuja FCT</option>
+                                <option value="Rivers">Rivers (Port Harcourt)</option>
+                                <option value="Kano">Kano</option>
+                                <option value="Oyo">Oyo (Ibadan)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Street Address</label>
+                            <textarea id="userAddrStreet" rows="3" placeholder="Enter street name and house number..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-brandBlue hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs transition">Save Address</button>
+                    </form>
+                </div>
+
+                <!-- Order History -->
+                <div class="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-brandGreen"></i> Order History
+                    </h3>
+                    <div id="orderHistoryContainer" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: ADMIN DASHBOARD -->
+        <section id="view-admin" class="hidden space-y-6">
+            <!-- Admin Header -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
+                <div>
+                    <span class="text-xs uppercase font-bold text-brandGreen tracking-widest">Management Suite</span>
+                    <h2 class="text-2xl font-black">Fort Mart Admin Control Panel</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="switchAdminTab('products')" id="tabBtnProducts" class="bg-brandBlue text-white font-bold px-4 py-2 rounded-xl text-xs">Products</button>
+                    <button onclick="switchAdminTab('users')" id="tabBtnUsers" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-bold px-4 py-2 rounded-xl text-xs">Users Log</button>
+                    <button onclick="logoutAdmin()" class="bg-red-500/20 text-red-400 hover:bg-red-500/30 font-bold px-3 py-2 rounded-xl text-xs">Logout</button>
+                </div>
+            </div>
+
+            <!-- ADMIN SUB-TAB: PRODUCTS CRUD -->
+            <div id="adminTabProducts" class="space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+                    <input type="text" id="adminProductSearch" oninput="renderAdminProducts(this.value)" placeholder="Search database products by title or ID..." class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs flex-1 focus:outline-none">
+                    <button onclick="openProductModal()" class="bg-brandGreen text-slate-900 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-md">
+                        <i class="fa-solid fa-plus"></i> Add New Product
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-600">
+                            <thead class="bg-slate-100 uppercase text-[10px] font-bold text-slate-400 border-b border-slate-200">
+                                <tr>
+                                    <th class="p-4">Item</th>
+                                    <th class="p-4">Category</th>
+                                    <th class="p-4">Price</th>
+                                    <th class="p-4">Stock</th>
+                                    <th class="p-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminProductsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN SUB-TAB: USERS LOG -->
+            <div id="adminTabUsers" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <input type="text" id="adminUserSearch" oninput="renderAdminUsers(this.value)" placeholder="Search users by name or email..." class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs w-full max-w-md focus:outline-none">
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-600">
+                            <thead class="bg-slate-100 uppercase text-[10px] font-bold text-slate-400 border-b border-slate-200">
+                                <tr>
+                                    <th class="p-4">User</th>
+                                    <th class="p-4">Email</th>
+                                    <th class="p-4">Loyalty Points</th>
+                                    <th class="p-4">Orders Count</th>
+                                    <th class="p-4 text-right">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-10 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white font-black">FM</div>
+                    <span class="text-base font-bold text-white tracking-tight">FORT<span class="text-brandGreen">MART</span></span>
+                </div>
+                <p>Nigeria's premier online store for tech gadgets, fashion accessories, and home lifestyle products.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 uppercase tracking-wider text-[11px]">Customer Care</h4>
+                <ul class="space-y-2">
+                    <li><a href="javascript:void(0)" onclick="openOrderLookupModal()" class="hover:text-white">Track Your Order</a></li>
+                    <li><a href="javascript:void(0)" onclick="navigateTo('profile')" class="hover:text-white">Account & Loyalty</a></li>
+                    <li><a href="#" class="hover:text-white">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 uppercase tracking-wider text-[11px]">Secure Payments</h4>
+                <p class="mb-2">Powered by Paystack simulation. We accept all major cards & bank transfers.</p>
+                <div class="flex gap-2 text-xl text-slate-500">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 uppercase tracking-wider text-[11px]">Contact Fort Mart</h4>
+                <p>Support Email: support@fortmart.ng</p>
+                <p class="mt-1">Head Office: Victoria Island, Lagos, Nigeria</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-800 text-center text-slate-500">
+            &copy; 2026 Fort Mart Inc. All rights reserved. Built for performance and conversion.
+        </div>
+    </footer>
+
+    <!-- SLIDE-OUT CART DRAWER -->
+    <div id="cartDrawerBackdrop" onclick="toggleCartDrawer(false)" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 transition-opacity"></div>
+    <div id="cartDrawer" class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Cart Header -->
+        <div class="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+            <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-bag-shopping text-brandBlue"></i> Shopping Cart
+            </h3>
+            <button onclick="toggleCartDrawer(false)" class="p-2 text-slate-400 hover:text-slate-700">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div id="cartItemList" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 custom-scrollbar">
+            <!-- Populated dynamically -->
+        </div>
+
+        <!-- Delivery & Pricing Summary Footer -->
+        <div class="p-4 sm:p-6 border-t border-slate-200 bg-slate-50 space-y-3">
+            <!-- Delivery Fee Calculator -->
+            <div class="space-y-1">
+                <label class="block text-xs font-bold text-slate-500 uppercase">Select Delivery State</label>
+                <select id="cartDeliveryStateSelect" onchange="updateCartTotals()" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-semibold text-slate-700">
+                    <option value="Lagos">Lagos (₦2,500 standard delivery)</option>
+                    <option value="Abuja">Abuja FCT (₦4,000 standard delivery)</option>
+                    <option value="Rivers">Rivers / Port Harcourt (₦4,500 delivery)</option>
+                    <option value="Kano">Kano (₦5,000 delivery)</option>
+                    <option value="Oyo">Oyo / Ibadan (₦3,000 delivery)</option>
+                    <option value="Other">Other States (₦5,500 flat rate)</option>
+                </select>
+            </div>
+
+            <!-- Loyalty Points Redemption -->
+            <div id="loyaltyRedeemBox" class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl flex items-center justify-between text-xs">
+                <div>
+                    <span class="font-bold text-emerald-800">Redeem Points</span>
+                    <p class="text-[10px] text-emerald-600">Available: <span id="cartAvailablePoints">0</span> pts</p>
+                </div>
+                <button onclick="toggleLoyaltyDiscount()" id="loyaltyRedeemBtn" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs hover:bg-emerald-700">Apply</button>
+            </div>
+
+            <div class="space-y-1 text-xs text-slate-600 pt-2 border-t border-slate-200">
+                <div class="flex justify-between">
+                    <span>Subtotal</span>
+                    <span class="font-medium" id="cartSubtotalText">₦0</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Delivery Fee</span>
+                    <span class="font-medium" id="cartDeliveryFeeText">₦0</span>
+                </div>
+                <div class="flex justify-between text-emerald-600 hidden" id="cartDiscountRow">
+                    <span>Loyalty Discount</span>
+                    <span id="cartDiscountText">-₦0</span>
+                </div>
+                <div class="flex justify-between text-sm font-black text-slate-900 pt-2 border-t border-slate-200">
+                    <span>Total Pay</span>
+                    <span id="cartTotalText" class="text-brandBlue">₦0</span>
+                </div>
+            </div>
+
+            <button onclick="openCheckoutModal()" class="w-full gradient-bg hover:opacity-95 text-white font-extrabold py-3.5 rounded-xl shadow-lg transition flex justify-center items-center gap-2 text-sm">
+                <span>Proceed to Paystack Checkout</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- CHECKOUT & PAYSTACK MODAL -->
+    <div id="checkoutModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl relative space-y-4">
+            <button onclick="closeCheckoutModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900">Paystack Express Checkout</h3>
+                <p class="text-xs text-slate-500">Simulated secure payment gateway</p>
+            </div>
+
+            <form id="paystackCheckoutForm" onsubmit="executeSimulatedPayment(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Full Name</label>
+                    <input type="text" id="payName" required placeholder="John Doe" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-brandBlue">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Email Address</label>
+                    <input type="email" id="payEmail" required placeholder="john@example.com" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-brandBlue">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Shipping Street Address</label>
+                    <input type="text" id="payStreet" required placeholder="House 12, Admiralty Way, VI" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-brandBlue">
+                </div>
+                
+                <div class="bg-slate-50 p-3 rounded-xl text-xs space-y-1">
+                    <div class="flex justify-between font-bold">
+                        <span>Total Payable:</span>
+                        <span id="payModalAmount" class="text-brandBlue text-sm">₦0</span>
+                    </div>
+                </div>
+
+                <button type="submit" id="payNowBtn" class="w-full bg-[#09A5DB] hover:bg-[#078cbd] text-white font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Pay Now with Paystack</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION MODAL (SIGN IN / SIGN UP / OTP) -->
+    <div id="authModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- STEP 1: LOGIN FORM -->
+            <div id="authStepLogin" class="space-y-4">
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-slate-900">Welcome Back</h3>
+                    <p class="text-xs text-slate-500">Sign in to track orders & view loyalty points</p>
+                </div>
+                <form onsubmit="handleUserLogin(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Email</label>
+                        <input type="email" id="loginEmail" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Password</label>
+                        <input type="password" id="loginPassword" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full gradient-bg text-white font-bold py-2.5 rounded-xl text-xs shadow-md">Sign In</button>
+                </form>
+                <div class="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
+                    Don't have an account? 
+                    <button onclick="switchAuthStep('signup')" class="text-brandBlue font-bold hover:underline">Create Account</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: SIGN UP FORM -->
+            <div id="authStepSignup" class="hidden space-y-4">
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-slate-900">Create Account</h3>
+                    <p class="text-xs text-slate-500">Join Fort Mart & get 50 bonus points</p>
+                </div>
+                <form onsubmit="handleUserSignupInitiate(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Full Name</label>
+                        <input type="text" id="signupName" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Email Address</label>
+                        <input type="email" id="signupEmail" required class="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Password</label>
+                        <input type="password" id="signupPassword" required minlength="6" class="w-full border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-brandGreen text-slate-900 font-bold py-2.5 rounded-xl text-xs shadow-md">Send OTP Verification</button>
+                </form>
+                <div class="text-center text-xs text-slate-500">
+                    Already registered? 
+                    <button onclick="switchAuthStep('login')" class="text-brandBlue font-bold hover:underline">Sign In</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: OTP VERIFICATION FORM -->
+            <div id="authStepOtp" class="hidden space-y-4">
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-blue-100 text-brandBlue rounded-full flex items-center justify-center mx-auto text-lg mb-2">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900">Verify Email OTP</h3>
+                    <p class="text-xs text-slate-500">Enter the 6-digit code sent to your email</p>
+                    <div class="bg-amber-50 text-amber-800 text-[11px] p-2 rounded-lg mt-2 font-mono">
+                        Simulated EmailJS OTP: <span id="simulatedOtpDisplay" class="font-bold text-xs">123456</span>
+                    </div>
+                </div>
+                <form onsubmit="verifyUserOtp(event)" class="space-y-3">
+                    <div>
+                        <input type="text" id="otpCodeInput" maxlength="6" placeholder="123456" required class="w-full border-2 border-brandBlue text-center text-xl tracking-widest font-black rounded-xl p-2.5 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full gradient-bg text-white font-bold py-2.5 rounded-xl text-xs shadow-md">Complete Registration</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER TRACKING LOOKUP MODAL -->
+    <div id="orderLookupModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl relative space-y-4">
+            <button onclick="closeOrderLookupModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center">
+                <h3 class="text-xl font-bold text-slate-900">Track Your Order</h3>
+                <p class="text-xs text-slate-500">Enter reference ID starting with FM-</p>
+            </div>
+            <form onsubmit="handleOrderLookup(event)" class="flex gap-2">
+                <input type="text" id="orderRefInput" required placeholder="FM-849201" class="flex-1 border border-slate-200 rounded-xl p-2.5 text-xs font-mono uppercase focus:outline-none">
+                <button type="submit" class="bg-brandBlue text-white font-bold px-4 rounded-xl text-xs">Lookup</button>
+            </form>
+            <div id="orderLookupResult" class="hidden p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+                <!-- Dynamic result view -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PRODUCT ADD/EDIT MODAL -->
+    <div id="adminProductModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeAdminProductModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-bold text-slate-900 mb-4" id="adminProductModalTitle">Add New Product</h3>
+            <form id="adminProductForm" onsubmit="saveAdminProduct(event)" class="space-y-4">
+                <input type="hidden" id="adminProdId">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Product Title</label>
+                        <input type="text" id="adminProdName" required class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Category</label>
+                        <input type="text" id="adminProdCategory" required placeholder="Audio, Electronics, Smart Home, etc." class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Price (NGN ₦)</label>
+                        <input type="number" id="adminProdPrice" required class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Slashed Original Price (NGN ₦)</label>
+                        <input type="number" id="adminProdSlashedPrice" class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Stock Level</label>
+                        <input type="number" id="adminProdStock" required class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Urgency Badge</label>
+                        <select id="adminProdBadge" class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                            <option value="">None</option>
+                            <option value="Only 3 left!">Only 3 left!</option>
+                            <option value="Hot Deal">Hot Deal</option>
+                            <option value="Best Seller">Best Seller</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Cover Image URL</label>
+                    <input type="url" id="adminProdCover" required class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Thumbnail Images (Comma-separated URLs)</label>
+                    <textarea id="adminProdThumbnails" rows="2" class="w-full border border-slate-200 rounded-xl p-2 text-xs" placeholder="https://..., https://..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Short Description</label>
+                    <input type="text" id="adminProdShortDesc" required class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Detailed Long Description</label>
+                    <textarea id="adminProdLongDesc" rows="3" required class="w-full border border-slate-200 rounded-xl p-2 text-xs"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Related Product IDs (Comma-separated)</label>
+                    <input type="text" id="adminProdRelated" placeholder="prod-1, prod-3" class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAdminProductModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-brandBlue text-white rounded-xl text-xs font-bold">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN USER INSPECT MODAL -->
+    <div id="adminUserModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative space-y-4">
+            <button onclick="closeAdminUserModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-bold text-slate-900">User Profile Inspection</h3>
+            <div id="adminUserModalContent" class="space-y-3 text-xs">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- LIVE FLOATING SOCIAL PROOF TOAST CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-4 left-4 z-50 space-y-2 pointer-events-none max-w-sm">
+        <!-- Floating sales proof dynamically popped -->
+    </div>
+
+    <!-- JAVASCRIPT LOGIC ARCHITECTURE -->
+    <script>
+        /* ==========================================================================
+           1. CORE DATA STORE & DATABASE INITIALIZATION
+           ========================================================================== */
+        
+        const DEFAULT_PRODUCTS = [
+            {
+                id: 'prod-1',
+                slug: 'sony-wh-1000xm5-noise-canceling-headphones',
+                name: 'Sony WH-1000XM5 Noise-Canceling Headphones',
+                price: 285000,
+                slashedPrice: 320000,
+                category: 'Audio',
+                rating: 4.9,
+                stock: 12,
+                urgencyBadge: 'Best Seller',
+                shortDescription: 'Industry-leading noise cancellation with spectacular sound quality.',
+                longDescription: 'The WH-1000XM5 headphones rewrite the rules for distraction-free listening. Two processors and 8 microphones control noise canceling for unprecedented sound clarity.',
+                coverImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [
+                    'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
+                    'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=80'
+                ],
+                relatedProductIds: ['prod-2', 'prod-4']
+            },
+            {
+                id: 'prod-2',
+                slug: 'apple-watch-series-9-gps-45mm',
+                name: 'Apple Watch Series 9 GPS 45mm',
+                price: 410000,
+                slashedPrice: 450000,
+                category: 'Wearables',
+                rating: 4.8,
+                stock: 3,
+                urgencyBadge: 'Only 3 left!',
+                shortDescription: 'Powerful S9 SiP chip with double tap gesture controls.',
+                longDescription: 'An indispensable companion for a healthy life is now even more powerful. The S9 SiP enables a super-bright display and a magical new way to quickly use your Apple Watch.',
+                coverImage: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [
+                    'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
+                ],
+                relatedProductIds: ['prod-1', 'prod-3']
+            },
+            {
+                id: 'prod-3',
+                slug: 'macbook-air-m2-136-inch-256gb-midnight',
+                name: 'MacBook Air M2 13.6-inch - 256GB Midnight',
+                price: 980000,
+                slashedPrice: 1100000,
+                category: 'Computers',
+                rating: 4.9,
+                stock: 7,
+                urgencyBadge: 'Hot Deal',
+                shortDescription: 'Strikingly thin design with fast M2 performance.',
+                longDescription: 'Redesigned around the next-generation M2 chip, MacBook Air is strikingly thin and brings exceptional speed and power efficiency inside its durable all-aluminum enclosure.',
+                coverImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [
+                    'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80'
+                ],
+                relatedProductIds: ['prod-2', 'prod-4']
+            },
+            {
+                id: 'prod-4',
+                slug: 'anker-magnetic-wireless-power-bank-10000mah',
+                name: 'Anker Magnetic Wireless Power Bank 10,000mAh',
+                price: 42000,
+                slashedPrice: 55000,
+                category: 'Accessories',
+                rating: 4.7,
+                stock: 25,
+                urgencyBadge: null,
+                shortDescription: 'Snap-on wireless charger with built-in foldable stand.',
+                longDescription: 'Equipped with a 10,000mAh capacity to provide up to 2 full charges for your iPhone or Android device. MagSafe compatible with strong magnet security.',
+                coverImage: 'https://images.unsplash.com/photo-1609592424074-1262f2eb657c?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-1', 'prod-2']
+            }
+        ];
+
+        // Currency Exchange Rates against NGN
+        const CURRENCY_RATES = {
+            NGN: { symbol: '₦', rate: 1 },
+            USD: { symbol: '$', rate: 0.00067 },
+            GBP: { symbol: '£', rate: 0.00053 },
+            EUR: { symbol: '€', rate: 0.00062 }
+        };
+
+        const DELIVERY_FEES = {
+            'Lagos': 2500,
+            'Abuja': 4000,
+            'Rivers': 4500,
+            'Kano': 5000,
+            'Oyo': 3000,
+            'Other': 5500
+        };
+
+        // Application State
+        let productsDatabase = JSON.parse(localStorage.getItem('fm_products')) || DEFAULT_PRODUCTS;
+        let registeredUsers = JSON.parse(localStorage.getItem('fm_users')) || [
+            {
+                name: 'Fort Developer',
+                email: 'fortdevelopers492@gmail.com',
+                password: 'adminpassword123',
+                role: 'admin',
+                loyaltyPoints: 350,
+                address: { state: 'Lagos', street: '14 Admiralty Way, VI' },
+                orders: [
+                    { id: 'FM-883920', date: '2026-03-15', total: 285000, status: 'Delivered' }
+                ]
+            }
+        ];
+        let orderDatabase = JSON.parse(localStorage.getItem('fm_orders')) || [
+            { id: 'FM-883920', customerEmail: 'fortdevelopers492@gmail.com', name: 'Fort Developer', total: 285000, status: 'Delivered', date: '2026-03-15' }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('fm_cart')) || [];
+        let activeCurrency = 'NGN';
+        let currentCategory = 'All';
+        let currentSearchQuery = '';
+        let currentSortOption = 'default';
+        let activeUser = JSON.parse(localStorage.getItem('fm_active_user')) || null;
+        let pendingSignupData = null;
+        let isLoyaltyApplied = false;
+
+        /* ==========================================================================
+           2. INITIALIZATION & STORAGE PERSISTENCE
+           ========================================================================== */
+        
+        window.onload = function() {
+            saveStateToStorage();
+            renderCategoryPills();
+            renderProductGrid();
+            updateCartBadge();
+            renderUserHeader();
+            startSocialProofToasts();
+        };
+
+        function saveStateToStorage() {
+            localStorage.setItem('fm_products', JSON.stringify(productsDatabase));
+            localStorage.setItem('fm_users', JSON.stringify(registeredUsers));
+            localStorage.setItem('fm_orders', JSON.stringify(orderDatabase));
+            localStorage.setItem('fm_cart', JSON.stringify(cart));
+            localStorage.setItem('fm_active_user', JSON.stringify(activeUser));
+        }
+
+        /* ==========================================================================
+           3. ROUTING & VIEW NAVIGATION
+           ========================================================================== */
+
+        function navigateTo(viewId, param = null) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.getElementById(`view-${viewId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            if (viewId === 'profile') {
+                renderUserProfileView();
+            } else if (viewId === 'admin') {
+                if (!activeUser || activeUser.role !== 'admin') {
+                    openAuthModal();
+                    navigateTo('home');
+                    showToast('Admin login required: fortdevelopers492@gmail.com / adminpassword123', 'error');
+                } else {
+                    renderAdminProducts();
+                }
+            }
+        }
+
+        // UPDATED: Product click function opens product.html?product={{name}}&id={{id}}
+        function openProductPage(productId) {
+            const product = productsDatabase.find(p => p.id === productId);
+            if (!product) return;
+            const encodedName = encodeURIComponent(product.name);
+            window.location.href = `product.html?product=${encodedName}&id=${product.id}`;
+        }
+
+        /* ==========================================================================
+           4. CURRENCY SWITCHING LOGIC
+           ========================================================================== */
+
+        function changeCurrency(currencyCode) {
+            activeCurrency = currencyCode;
+            renderProductGrid();
+            updateCartTotals();
+        }
+
+        function formatPrice(amountInNGN) {
+            const curr = CURRENCY_RATES[activeCurrency] || CURRENCY_RATES.NGN;
+            const converted = amountInNGN * curr.rate;
+            return `${curr.symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: activeCurrency === 'NGN' ? 0 : 2, maximumFractionDigits: 2 })}`;
+        }
+
+        /* ==========================================================================
+           5. SORTING, FILTERING & SEARCH ENGINE
+           ========================================================================== */
+
+        function renderCategoryPills() {
+            const categories = ['All', ...new Set(productsDatabase.map(p => p.category))];
+            const container = document.getElementById('categoryPillContainer');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="selectCategory('${cat}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${currentCategory === cat ? 'bg-slate-900 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function selectCategory(cat) {
+            currentCategory = cat;
+            renderCategoryPills();
+            renderProductGrid();
+        }
+
+        function handleSortChange(sortValue) {
+            currentSortOption = sortValue;
+            renderProductGrid();
+        }
+
+        function handleSearchInput(val) {
+            currentSearchQuery = val.trim().toLowerCase();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (val.length > 0) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+
+            renderSearchAutocomplete();
+            renderProductGrid();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            currentSearchQuery = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            document.getElementById('searchDropdown').classList.add('hidden');
+            renderProductGrid();
+        }
+
+        function renderSearchAutocomplete() {
+            const dropdown = document.getElementById('searchDropdown');
+            if (!currentSearchQuery) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            const matches = productsDatabase.filter(p => 
+                p.name.toLowerCase().includes(currentSearchQuery) || 
+                p.category.toLowerCase().includes(currentSearchQuery)
+            ).slice(0, 5);
+
+            if (matches.length === 0) {
+                dropdown.innerHTML = `<div class="p-3 text-xs text-slate-500 text-center">No quick results found.</div>`;
+            } else {
+                dropdown.innerHTML = matches.map(p => `
+                    <div onclick="openProductPage('${p.id}'); hideSearchDropdown();" class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer transition">
+                        <img src="${p.coverImage}" class="w-10 h-10 object-cover rounded-md">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-xs font-bold text-slate-900 truncate">${p.name}</h4>
+                            <span class="text-[10px] text-brandBlue font-bold">${formatPrice(p.price)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            dropdown.classList.remove('hidden');
+        }
+
+        function showSearchDropdown() {
+            if (currentSearchQuery) document.getElementById('searchDropdown').classList.remove('hidden');
+        }
+
+        function hideSearchDropdown() {
+            setTimeout(() => document.getElementById('searchDropdown').classList.add('hidden'), 200);
+        }
+
+        function renderProductGrid() {
+            let list = [...productsDatabase];
+
+            if (currentCategory !== 'All') {
+                list = list.filter(p => p.category === currentCategory);
+            }
+
+            if (currentSearchQuery) {
+                list = list.filter(p => 
+                    p.name.toLowerCase().includes(currentSearchQuery) || 
+                    p.category.toLowerCase().includes(currentSearchQuery) ||
+                    p.shortDescription.toLowerCase().includes(currentSearchQuery)
+                );
+            }
+
+            switch (currentSortOption) {
+                case 'price-low-high':
+                    list.sort((a, b) => Number(a.price) - Number(b.price));
+                    break;
+                case 'price-high-low':
+                    list.sort((a, b) => Number(b.price) - Number(a.price));
+                    break;
+                case 'rating':
+                    list.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
+                    break;
+                case 'name-asc':
+                    list.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                default:
+                    break;
+            }
+
+            document.getElementById('activeCategoryTitle').innerText = currentCategory === 'All' ? 'All Products' : currentCategory;
+            document.getElementById('productCountBadge').innerText = list.length;
+
+            const grid = document.getElementById('productGrid');
+            const noFound = document.getElementById('noProductsFound');
+
+            if (list.length === 0) {
+                grid.innerHTML = '';
+                noFound.classList.remove('hidden');
+                return;
+            }
+
+            noFound.classList.add('hidden');
+            grid.innerHTML = list.map(p => `
+                <div class="bg-white rounded-3xl border border-slate-200/80 p-4 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                    <div class="relative mb-3 overflow-hidden rounded-2xl bg-slate-100 cursor-pointer" onclick="openProductPage('${p.id}')">
+                        <img src="${p.coverImage}" alt="${p.name}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                        ${p.urgencyBadge ? `<span class="absolute top-2 left-2 bg-red-500 text-white font-extrabold text-[10px] uppercase px-2 py-0.5 rounded-md shadow-md">${p.urgencyBadge}</span>` : ''}
+                        <button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-md text-slate-700 hover:text-red-500 flex items-center justify-center transition">
+                            <i class="fa-regular fa-heart text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] text-slate-400 font-semibold mb-1">
+                                <span>${p.category}</span>
+                                <span class="text-amber-500 font-bold"><i class="fa-solid fa-star me-1"></i>${p.rating}</span>
+                            </div>
+                            <h3 onclick="openProductPage('${p.id}')" class="font-bold text-slate-900 text-sm hover:text-brandBlue line-clamp-2 cursor-pointer transition">${p.name}</h3>
+                            <p class="text-xs text-slate-500 line-clamp-2 mt-1">${p.shortDescription}</p>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                            <div>
+                                <span class="text-base font-black text-slate-900">${formatPrice(p.price)}</span>
+                                ${p.slashedPrice ? `<span class="block text-[10px] text-slate-400 line-through">${formatPrice(p.slashedPrice)}</span>` : ''}
+                            </div>
+                            <button onclick="addToCart('${p.id}')" class="bg-slate-900 hover:bg-brandBlue text-white p-2.5 rounded-xl transition shadow-md flex items-center gap-1.5 text-xs font-bold">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function resetFilters() {
+            currentCategory = 'All';
+            currentSearchQuery = '';
+            currentSortOption = 'default';
+            document.getElementById('sortSelect').value = 'default';
+            document.getElementById('searchInput').value = '';
+            renderCategoryPills();
+            renderProductGrid();
+        }
+
+        /* ==========================================================================
+           6. SHOPPING CART DRAWER & CHECKOUT
+           ========================================================================== */
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            const backdrop = document.getElementById('cartDrawerBackdrop');
+            if (open) {
+                renderCartDrawer();
+                drawer.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        function addToCart(productId) {
+            const existing = cart.find(item => item.id === productId);
+            const product = productsDatabase.find(p => p.id === productId);
+
+            if (!product) return;
+
+            if (existing) {
+                if (existing.qty < product.stock) {
+                    existing.qty += 1;
+                    showToast(`Added another ${product.name} to cart!`, 'success');
+                } else {
+                    showToast('Maximum stock reached for this item.', 'error');
+                }
+            } else {
+                cart.push({ id: productId, qty: 1 });
+                showToast(`Added ${product.name} to cart!`, 'success');
+            }
+
+            saveStateToStorage();
+            updateCartBadge();
+            renderCartDrawer();
+        }
+
+        function updateCartQty(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (!item) return;
+
+            const product = productsDatabase.find(p => p.id === productId);
+            item.qty += delta;
+
+            if (item.qty <= 0) {
+                cart = cart.filter(i => i.id !== productId);
+            } else if (product && item.qty > product.stock) {
+                item.qty = product.stock;
+                showToast('Cannot exceed available stock limit', 'error');
+            }
+
+            saveStateToStorage();
+            updateCartBadge();
+            renderCartDrawer();
+        }
+
+        function updateCartBadge() {
+            const count = cart.reduce((acc, i) => acc + i.qty, 0);
+            document.getElementById('cartBadgeCount').innerText = count;
+        }
+
+        function renderCartDrawer() {
+            const container = document.getElementById('cartItemList');
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-2"></i>
+                        <p class="text-xs font-bold">Your cart is empty.</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = cart.map(item => {
+                    const product = productsDatabase.find(p => p.id === item.id);
+                    if (!product) return '';
+                    return `
+                        <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200/80">
+                            <img src="${product.coverImage}" class="w-14 h-14 object-cover rounded-xl">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-xs font-bold text-slate-900 truncate">${product.name}</h4>
+                                <span class="text-xs font-bold text-brandBlue">${formatPrice(product.price)}</span>
+                            </div>
+                            <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-xl border border-slate-200">
+                                <button onclick="updateCartQty('${item.id}', -1)" class="text-slate-500 hover:text-slate-900 text-xs px-1">-</button>
+                                <span class="text-xs font-bold">${item.qty}</span>
+                                <button onclick="updateCartQty('${item.id}', 1)" class="text-slate-500 hover:text-slate-900 text-xs px-1">+</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (activeUser) {
+                document.getElementById('cartAvailablePoints').innerText = activeUser.loyaltyPoints || 0;
+            } else {
+                document.getElementById('cartAvailablePoints').innerText = '0 (Sign in)';
+            }
+
+            updateCartTotals();
+        }
+
+        function updateCartTotals() {
+            const subtotalNGN = cart.reduce((acc, item) => {
+                const p = productsDatabase.find(prod => prod.id === item.id);
+                return acc + (p ? p.price * item.qty : 0);
+            }, 0);
+
+            const state = document.getElementById('cartDeliveryStateSelect').value;
+            const deliveryFeeNGN = cart.length > 0 ? (DELIVERY_FEES[state] || 5500) : 0;
+
+            let discountNGN = 0;
+            if (isLoyaltyApplied && activeUser && activeUser.loyaltyPoints > 0) {
+                discountNGN = (activeUser.loyaltyPoints / 10) * 100;
+                document.getElementById('cartDiscountRow').classList.remove('hidden');
+            } else {
+                document.getElementById('cartDiscountRow').classList.add('hidden');
+            }
+
+            const totalNGN = Math.max(0, subtotalNGN + deliveryFeeNGN - discountNGN);
+
+            document.getElementById('cartSubtotalText').innerText = formatPrice(subtotalNGN);
+            document.getElementById('cartDeliveryFeeText').innerText = formatPrice(deliveryFeeNGN);
+            document.getElementById('cartDiscountText').innerText = `-${formatPrice(discountNGN)}`;
+            document.getElementById('cartTotalText').innerText = formatPrice(totalNGN);
+
+            return { subtotalNGN, deliveryFeeNGN, discountNGN, totalNGN };
+        }
+
+        function toggleLoyaltyDiscount() {
+            if (!activeUser) {
+                openAuthModal();
+                showToast('Please sign in to redeem loyalty points.', 'error');
+                return;
+            }
+            isLoyaltyApplied = !isLoyaltyApplied;
+            const btn = document.getElementById('loyaltyRedeemBtn');
+            btn.innerText = isLoyaltyApplied ? 'Remove' : 'Apply';
+            btn.className = isLoyaltyApplied ? 'bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs' : 'bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs';
+            updateCartTotals();
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast('Your cart is empty!', 'error');
+                return;
+            }
+            toggleCartDrawer(false);
+            const totals = updateCartTotals();
+            document.getElementById('payModalAmount').innerText = formatPrice(totals.totalNGN);
+
+            if (activeUser) {
+                document.getElementById('payName').value = activeUser.name || '';
+                document.getElementById('payEmail').value = activeUser.email || '';
+                document.getElementById('payStreet').value = activeUser.address ? activeUser.address.street || '' : '';
+            }
+
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function executeSimulatedPayment(e) {
+            e.preventDefault();
+            const totals = updateCartTotals();
+            const refId = `FM-${Math.floor(100000 + Math.random() * 900000)}`;
+            const email = document.getElementById('payEmail').value;
+            const name = document.getElementById('payName').value;
+
+            const newOrder = {
+                id: refId,
+                customerEmail: email,
+                name: name,
+                total: totals.totalNGN,
+                status: 'Processing',
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            orderDatabase.unshift(newOrder);
+
+            const earnedPoints = Math.floor(totals.totalNGN / 1000) * 10;
+
+            if (activeUser) {
+                if (isLoyaltyApplied) activeUser.loyaltyPoints = 0;
+                activeUser.loyaltyPoints = (activeUser.loyaltyPoints || 0) + earnedPoints;
+                if (!activeUser.orders) activeUser.orders = [];
+                activeUser.orders.unshift(newOrder);
+
+                const idx = registeredUsers.findIndex(u => u.email === activeUser.email);
+                if (idx !== -1) registeredUsers[idx] = activeUser;
+            }
+
+            cart.forEach(cartItem => {
+                const prod = productsDatabase.find(p => p.id === cartItem.id);
+                if (prod) prod.stock = Math.max(0, prod.stock - cartItem.qty);
+            });
+
+            cart = [];
+            isLoyaltyApplied = false;
+            saveStateToStorage();
+            updateCartBadge();
+            closeCheckoutModal();
+
+            showToast(`Order Placed! Reference: ${refId}. Earned +${earnedPoints} Loyalty Points.`, 'success');
+        }
+
+        /* ==========================================================================
+           7. USER AUTHENTICATION & OTP SIMULATION WORKFLOW
+           ========================================================================== */
+
+        function openAuthModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+            switchAuthStep('login');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function switchAuthStep(step) {
+            document.getElementById('authStepLogin').classList.add('hidden');
+            document.getElementById('authStepSignup').classList.add('hidden');
+            document.getElementById('authStepOtp').classList.add('hidden');
+
+            if (step === 'login') document.getElementById('authStepLogin').classList.remove('hidden');
+            if (step === 'signup') document.getElementById('authStepSignup').classList.remove('hidden');
+            if (step === 'otp') document.getElementById('authStepOtp').classList.remove('hidden');
+        }
+
+        function handleUserLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+
+            const user = registeredUsers.find(u => u.email === email && u.password === pass);
+
+            if (user) {
+                activeUser = user;
+                saveStateToStorage();
+                renderUserHeader();
+                closeAuthModal();
+                showToast(`Welcome back, ${user.name}!`, 'success');
+            } else {
+                showToast('Invalid email or password', 'error');
+            }
+        }
+
+        function handleUserSignupInitiate(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const pass = document.getElementById('signupPassword').value.trim();
+
+            if (registeredUsers.some(u => u.email === email)) {
+                showToast('Email address is already registered.', 'error');
+                return;
+            }
+
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            pendingSignupData = { name, email, password: pass, generatedOtp: otp };
+
+            document.getElementById('simulatedOtpDisplay').innerText = otp;
+            switchAuthStep('otp');
+            showToast(`Simulated EmailJS OTP sent to ${email}`, 'success');
+        }
+
+        function verifyUserOtp(e) {
+            e.preventDefault();
+            const entered = document.getElementById('otpCodeInput').value.trim();
+
+            if (pendingSignupData && entered === pendingSignupData.generatedOtp) {
+                const newUser = {
+                    name: pendingSignupData.name,
+                    email: pendingSignupData.email,
+                    password: pendingSignupData.password,
+                    role: 'customer',
+                    loyaltyPoints: 50,
+                    address: { state: 'Lagos', street: '' },
+                    orders: []
+                };
+
+                registeredUsers.push(newUser);
+                activeUser = newUser;
+                saveStateToStorage();
+                renderUserHeader();
+                closeAuthModal();
+                showToast('Account created successfully! +50 Bonus Loyalty Points.', 'success');
+            } else {
+                showToast('Incorrect OTP code entered.', 'error');
+            }
+        }
+
+        function logoutUser() {
+            activeUser = null;
+            saveStateToStorage();
+            renderUserHeader();
+            navigateTo('home');
+            showToast('Logged out successfully.', 'info');
+        }
+
+        function renderUserHeader() {
+            const container = document.getElementById('userHeaderArea');
+            if (activeUser) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <button onclick="navigateTo('profile')" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-xl text-sm transition">
+                            <i class="fa-solid fa-user text-brandBlue"></i>
+                            <span class="hidden sm:inline">${activeUser.name.split(' ')[0]}</span>
+                        </button>
+                        <button onclick="logoutUser()" class="p-2 text-slate-400 hover:text-red-500" title="Logout">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal()" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-xl text-sm transition">
+                        <i class="fa-regular fa-circle-user text-base"></i>
+                        <span class="hidden sm:inline">Sign In</span>
+                    </button>
+                `;
+            }
+        }
+
+        /* ==========================================================================
+           8. USER PROFILE & ADDRESS BOOK
+           ========================================================================== */
+
+        function renderUserProfileView() {
+            if (!activeUser) {
+                openAuthModal();
+                navigateTo('home');
+                return;
+            }
+
+            document.getElementById('profileName').innerText = activeUser.name;
+            document.getElementById('profileEmail').innerText = activeUser.email;
+            document.getElementById('profileAvatar').innerText = activeUser.name.charAt(0).toUpperCase();
+            document.getElementById('profileLoyaltyPoints').innerText = activeUser.loyaltyPoints || 0;
+
+            if (activeUser.address) {
+                document.getElementById('userAddrState').value = activeUser.address.state || 'Lagos';
+                document.getElementById('userAddrStreet').value = activeUser.address.street || '';
+            }
+
+            const historyContainer = document.getElementById('orderHistoryContainer');
+            const orders = activeUser.orders || [];
+
+            if (orders.length === 0) {
+                historyContainer.innerHTML = `<p class="text-xs text-slate-400">No past orders recorded yet.</p>`;
+            } else {
+                historyContainer.innerHTML = orders.map(o => `
+                    <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between text-xs">
+                        <div>
+                            <span class="font-mono font-bold text-brandBlue">${o.id}</span>
+                            <span class="text-[10px] text-slate-400 block">${o.date}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-black text-slate-900">${formatPrice(o.total)}</span>
+                            <span class="block text-[10px] font-bold text-emerald-600">${o.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function saveUserAddress(e) {
+            e.preventDefault();
+            if (!activeUser) return;
+            activeUser.address = {
+                state: document.getElementById('userAddrState').value,
+                street: document.getElementById('userAddrStreet').value
+            };
+            
+            const idx = registeredUsers.findIndex(u => u.email === activeUser.email);
+            if (idx !== -1) registeredUsers[idx] = activeUser;
+            saveStateToStorage();
+            showToast('Delivery address updated successfully.', 'success');
+        }
+
+        /* ==========================================================================
+           9. ORDER TRACKING LOOKUP
+           ========================================================================== */
+
+        function openOrderLookupModal() {
+            document.getElementById('orderLookupModal').classList.remove('hidden');
+        }
+
+        function closeOrderLookupModal() {
+            document.getElementById('orderLookupModal').classList.add('hidden');
+        }
+
+        function handleOrderLookup(e) {
+            e.preventDefault();
+            const ref = document.getElementById('orderRefInput').value.trim().toUpperCase();
+            const resultDiv = document.getElementById('orderLookupResult');
+            const match = orderDatabase.find(o => o.id === ref);
+
+            if (match) {
+                resultDiv.innerHTML = `
+                    <div class="flex justify-between font-bold text-slate-900">
+                        <span>Status: <span class="text-emerald-600">${match.status}</span></span>
+                        <span>${formatPrice(match.total)}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500">Customer: ${match.name} (${match.customerEmail})</p>
+                    <p class="text-[11px] text-slate-500">Placed Date: ${match.date}</p>
+                `;
+            } else {
+                resultDiv.innerHTML = `<p class="text-red-500 font-bold">No order found matching reference ${ref}</p>`;
+            }
+            resultDiv.classList.remove('hidden');
+        }
+
+        /* ==========================================================================
+           10. ADMIN DASHBOARD & CRUD LOGIC
+           ========================================================================== */
+
+        function switchAdminTab(tab) {
+            document.getElementById('adminTabProducts').classList.add('hidden');
+            document.getElementById('adminTabUsers').classList.add('hidden');
+            document.getElementById('tabBtnProducts').className = 'bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs';
+            document.getElementById('tabBtnUsers').className = 'bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs';
+
+            if (tab === 'products') {
+                document.getElementById('adminTabProducts').classList.remove('hidden');
+                document.getElementById('tabBtnProducts').className = 'bg-brandBlue text-white font-bold px-4 py-2 rounded-xl text-xs';
+                renderAdminProducts();
+            } else {
+                document.getElementById('adminTabUsers').classList.remove('hidden');
+                document.getElementById('tabBtnUsers').className = 'bg-brandBlue text-white font-bold px-4 py-2 rounded-xl text-xs';
+                renderAdminUsers();
+            }
+        }
+
+        function renderAdminProducts(filterQuery = '') {
+            const tbody = document.getElementById('adminProductsTableBody');
+            let list = productsDatabase;
+
+            if (filterQuery) {
+                const q = filterQuery.toLowerCase();
+                list = list.filter(p => p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
+            }
+
+            tbody.innerHTML = list.map(p => `
+                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <td class="p-4 flex items-center gap-3">
+                        <img src="${p.coverImage}" class="w-10 h-10 object-cover rounded-xl">
+                        <div>
+                            <div class="font-bold text-slate-900">${p.name}</div>
+                            <span class="text-[10px] text-slate-400 font-mono">${p.id}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 font-semibold">${p.category}</td>
+                    <td class="p-4 font-bold text-slate-900">${formatPrice(p.price)}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded-md text-[10px] font-bold ${p.stock > 5 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">${p.stock} units</span>
+                    </td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="openProductModal('${p.id}')" class="text-brandBlue font-bold hover:underline">Edit</button>
+                        <button onclick="deleteProduct('${p.id}')" class="text-red-500 font-bold hover:underline">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openProductModal(productId = null) {
+            const modal = document.getElementById('adminProductModal');
+            const title = document.getElementById('adminProductModalTitle');
+            const form = document.getElementById('adminProductForm');
+
+            form.reset();
+            if (productId) {
+                title.innerText = 'Edit Product';
+                const p = productsDatabase.find(prod => prod.id === productId);
+                if (p) {
+                    document.getElementById('adminProdId').value = p.id;
+                    document.getElementById('adminProdName').value = p.name;
+                    document.getElementById('adminProdCategory').value = p.category;
+                    document.getElementById('adminProdPrice').value = p.price;
+                    document.getElementById('adminProdSlashedPrice').value = p.slashedPrice || '';
+                    document.getElementById('adminProdStock').value = p.stock;
+                    document.getElementById('adminProdBadge').value = p.urgencyBadge || '';
+                    document.getElementById('adminProdCover').value = p.coverImage;
+                    document.getElementById('adminProdThumbnails').value = (p.additionalImages || []).join(', ');
+                    document.getElementById('adminProdShortDesc').value = p.shortDescription;
+                    document.getElementById('adminProdLongDesc').value = p.longDescription;
+                    document.getElementById('adminProdRelated').value = (p.relatedProductIds || []).join(', ');
+                }
+            } else {
+                title.innerText = 'Add New Product';
+                document.getElementById('adminProdId').value = '';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeAdminProductModal() {
+            document.getElementById('adminProductModal').classList.add('hidden');
+        }
+
+        function saveAdminProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('adminProdId').value || `prod-${Date.now()}`;
+            const name = document.getElementById('adminProdName').value;
+            const category = document.getElementById('adminProdCategory').value;
+            const price = parseFloat(document.getElementById('adminProdPrice').value);
+            const slashedPrice = parseFloat(document.getElementById('adminProdSlashedPrice').value) || null;
+            const stock = parseInt(document.getElementById('adminProdStock').value);
+            const badge = document.getElementById('adminProdBadge').value || null;
+            const coverImage = document.getElementById('adminProdCover').value;
+            const thumbnailsRaw = document.getElementById('adminProdThumbnails').value;
+            const shortDescription = document.getElementById('adminProdShortDesc').value;
+            const longDescription = document.getElementById('adminProdLongDesc').value;
+            const relatedRaw = document.getElementById('adminProdRelated').value;
+
+            const additionalImages = thumbnailsRaw ? thumbnailsRaw.split(',').map(s => s.trim()) : [];
+            const relatedProductIds = relatedRaw ? relatedRaw.split(',').map(s => s.trim()) : [];
+
+            const existingIndex = productsDatabase.findIndex(p => p.id === id);
+            const updatedProd = {
+                id, name, category, price, slashedPrice, stock, urgencyBadge: badge,
+                coverImage, additionalImages, shortDescription, longDescription, relatedProductIds,
+                rating: existingIndex !== -1 ? productsDatabase[existingIndex].rating : 5.0
+            };
+
+            if (existingIndex !== -1) {
+                productsDatabase[existingIndex] = updatedProd;
+            } else {
+                productsDatabase.unshift(updatedProd);
+            }
+
+            saveStateToStorage();
+            renderAdminProducts();
+            renderCategoryPills();
+            renderProductGrid();
+            closeAdminProductModal();
+            showToast('Product saved successfully!', 'success');
+        }
+
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                productsDatabase = productsDatabase.filter(p => p.id !== productId);
+                saveStateToStorage();
+                renderAdminProducts();
+                renderProductGrid();
+                showToast('Product removed.', 'info');
+            }
+        }
+
+        function renderAdminUsers(filterQuery = '') {
+            const tbody = document.getElementById('adminUsersTableBody');
+            let list = registeredUsers;
+
+            if (filterQuery) {
+                const q = filterQuery.toLowerCase();
+                list = list.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+            }
+
+            tbody.innerHTML = list.map(u => `
+                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <td class="p-4 font-bold text-slate-900">${u.name}</td>
+                    <td class="p-4">${u.email}</td>
+                    <td class="p-4 font-bold text-emerald-600">${u.loyaltyPoints || 0} pts</td>
+                    <td class="p-4 font-bold">${(u.orders || []).length} orders</td>
+                    <td class="p-4 text-right">
+                        <button onclick="inspectAdminUser('${u.email}')" class="text-brandBlue font-bold hover:underline">Inspect</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function inspectAdminUser(email) {
+            const user = registeredUsers.find(u => u.email === email);
+            if (!user) return;
+
+            const content = document.getElementById('adminUserModalContent');
+            content.innerHTML = `
+                <div class="space-y-2 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <p><strong>Name:</strong> ${user.name}</p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Loyalty Balance:</strong> ${user.loyaltyPoints || 0} Points</p>
+                    <p><strong>Saved Address:</strong> ${user.address ? `${user.address.street}, ${user.address.state}` : 'Not set'}</p>
+                </div>
+                <h4 class="font-bold text-slate-900 pt-2">Past Orders (${(user.orders || []).length})</h4>
+                <div class="max-h-48 overflow-y-auto space-y-2 custom-scrollbar">
+                    ${(user.orders || []).map(o => `
+                        <div class="p-2 bg-white rounded-xl border border-slate-200 flex justify-between">
+                            <span>${o.id} (${o.date})</span>
+                            <span class="font-bold text-brandBlue">${formatPrice(o.total)}</span>
+                        </div>
+                    `).join('') || '<p class="text-slate-400">No orders yet.</p>'}
+                </div>
+            `;
+
+            document.getElementById('adminUserModal').classList.remove('hidden');
+        }
+
+        function closeAdminUserModal() {
+            document.getElementById('adminUserModal').classList.add('hidden');
+        }
+
+        function logoutAdmin() {
+            logoutUser();
+        }
+
+        /* ==========================================================================
+           11. LIVE SOCIAL PROOF FLOATING TOASTS
+           ========================================================================== */
+
+        const SAMPLE_LOCATIONS = ['Port Harcourt', 'Lagos', 'Abuja', 'Ibadan', 'Kano', 'Enugu'];
+        
+        function startSocialProofToasts() {
+            setInterval(() => {
+                if (productsDatabase.length === 0) return;
+                const randomProd = productsDatabase[Math.floor(Math.random() * productsDatabase.length)];
+                const randomLoc = SAMPLE_LOCATIONS[Math.floor(Math.random() * SAMPLE_LOCATIONS.length)];
+                const randomMins = Math.floor(Math.random() * 15) + 1;
+
+                showFloatingProof(`Someone in <strong>${randomLoc}</strong> purchased <strong>${randomProd.name}</strong> ${randomMins}m ago`);
+            }, 12000);
+        }
+
+        function showFloatingProof(htmlMessage) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'animate-toast bg-slate-900/90 backdrop-blur-md text-white text-xs p-3 rounded-2xl shadow-2xl border border-slate-700/50 flex items-center gap-3 pointer-events-auto';
+            toast.innerHTML = `
+                <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center font-bold text-white text-xs">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+                <div class="flex-1">${htmlMessage}</div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            let bg = 'bg-slate-900';
+            if (type === 'success') bg = 'bg-emerald-600';
+            if (type === 'error') bg = 'bg-red-600';
+
+            toast.className = `animate-toast ${bg} text-white text-xs px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 pointer-events-auto font-medium`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+    </script>
+</body>
+</html>
