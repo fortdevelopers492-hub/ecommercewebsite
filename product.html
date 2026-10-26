@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Product Details - Fort Mart</title>
 
-    <!-- Default Open Graph / Facebook Meta Tags -->
+    <!-- Default Open Graph / Facebook Meta Tags with Fixed Brand Cover Image -->
     <meta property="og:type" content="product" id="ogType" />
     <meta property="og:title" content="Fort Mart Store - Premium Products" id="ogTitle" />
     <meta property="og:description" content="Discover premium tech, fashion, and lifestyle items with fast nationwide delivery." id="ogDescription" />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80" id="ogImage" />
+    <meta property="og:image" content="https://fortdevelopers492-hub.github.io/imagerepo/fort-mart-e-commerce-2-product-cover-photo.jpg" id="ogImage" />
     <meta property="og:url" content="https://yourdomain.com/product.html" id="ogUrl" />
 
-    <!-- Twitter Card Meta Tags -->
+    <!-- Twitter Card Meta Tags with Fixed Brand Cover Image -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Fort Mart Store" id="twTitle">
     <meta name="twitter:description" content="Discover premium tech, fashion, and lifestyle items." id="twDescription">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80" id="twImage">
+    <meta name="twitter:image" content="https://fortdevelopers492-hub.github.io/imagerepo/fort-mart-e-commerce-2-product-cover-photo.jpg" id="twImage">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -223,23 +223,25 @@
             const currentUrl = window.location.href;
             const fullTitle = `${product.name} | Fort Mart`;
             const description = product.shortDescription || product.longDescription;
-            const image = product.coverImage;
+            
+            // Keep preview image locked to your static shared cover image link
+            const fixedCoverImage = "https://fortdevelopers492-hub.github.io/imagerepo/fort-mart-e-commerce-2-product-cover-photo";
 
             // Page Title
             document.title = fullTitle;
             document.getElementById('pageTitle').innerText = fullTitle;
 
-            // Open Graph Tags Update
+            // Open Graph Tags Update (Keeping image static as requested)
             setMetaAttribute('ogTitle', 'content', product.name);
             setMetaAttribute('ogDescription', 'content', description);
-            setMetaAttribute('ogImage', 'content', image);
+            setMetaAttribute('ogImage', 'content', fixedCoverImage);
             setMetaAttribute('ogUrl', 'content', currentUrl);
             setMetaAttribute('ogType', 'content', 'product');
 
-            // Twitter Card Tags Update
+            // Twitter Card Tags Update (Keeping image static as requested)
             setMetaAttribute('twTitle', 'content', product.name);
             setMetaAttribute('twDescription', 'content', description);
-            setMetaAttribute('twImage', 'content', image);
+            setMetaAttribute('twImage', 'content', fixedCoverImage);
         }
 
         function setMetaAttribute(id, attr, val) {
