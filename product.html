@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Fort Mart Store - Premium Products</title>
+    <title id="pageTitle">Product Details - Fort Mart</title>
 
-    <!-- Default Static Open Graph Tags (Seen by Crawlers on Static Hosting) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Fort Mart" />
+    <!-- Default Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="product" id="ogType" />
     <meta property="og:title" content="Fort Mart Store - Premium Products" id="ogTitle" />
     <meta property="og:description" content="Discover premium tech, fashion, and lifestyle items with fast nationwide delivery." id="ogDescription" />
     <meta property="og:image" content="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80" id="ogImage" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="https://fortdevelopers492-hub.github.io/ecommercewebsite/product.html" id="ogUrl" />
+    <meta property="og:url" content="https://yourdomain.com/product.html" id="ogUrl" />
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
@@ -75,6 +72,7 @@
         
         <!-- Expanded Product Info Section -->
         <div id="productDetailCard" class="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-200/80">
+            <!-- Dynamically Populated via JS -->
             <div class="text-center py-16">
                 <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brandBlue mb-3"></i>
                 <p class="text-sm font-medium text-slate-500">Loading product information...</p>
@@ -100,8 +98,9 @@
         </div>
     </footer>
 
-    <!-- JavaScript Dynamic URL Parameter Processing -->
+    <!-- JavaScript Dynamic URL Parameter Processing & Open Graph Updater -->
     <script>
+        // Default Mock Data Store (Synchronized with LocalStorage if available)
         const DEFAULT_PRODUCTS = [
             {
                 id: 'prod-1',
@@ -176,23 +175,31 @@
             }
         ];
 
+        // Retrieve product array from local storage or fallback to default
         const productsDatabase = JSON.parse(localStorage.getItem('fm_products')) || DEFAULT_PRODUCTS;
 
+        window.addEventListener('DOMContentLoaded', () => {
+            initProductPage();
+        });
+
         function initProductPage() {
+            // Parse URL Parameters (e.g. product.html?product=Nike+Air+Max&id=prod-1)
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('id');
             const productNameParam = urlParams.get('product');
 
             let product = null;
 
+            // Search product by ID first, then by matching product name query parameter
             if (productId) {
                 product = productsDatabase.find(p => p.id === productId || p.slug === productId);
             }
             if (!product && productNameParam) {
-                const searchName = decodeURIComponent(productNameParam).replaceAll('+', ' ').toLowerCase();
+                const searchName = productNameParam.replaceAll('+', ' ').toLowerCase();
                 product = productsDatabase.find(p => p.name.toLowerCase() === searchName || p.slug === searchName);
             }
 
+            // Fallback to first product if query parameter is invalid or not provided
             if (!product && productsDatabase.length > 0) {
                 product = productsDatabase[0];
             }
@@ -202,28 +209,35 @@
                 return;
             }
 
+            // 1. Update Document Page Title & Dynamic Meta Open Graph Tags via JS
             updateMetaAndOGTags(product);
+
+            // 2. Render Product Full Details
             renderProductDetails(product);
+
+            // 3. Render Dynamic Related Products
             renderRelatedProducts(product);
         }
 
         function updateMetaAndOGTags(product) {
             const currentUrl = window.location.href;
-            const fullTitle = `${product.name} - Fort Mart`;
+            const fullTitle = `${product.name} | Fort Mart`;
             const description = product.shortDescription || product.longDescription;
             const image = product.coverImage;
 
-            // In-browser tab title
+            // Page Title
             document.title = fullTitle;
+            document.getElementById('pageTitle').innerText = fullTitle;
 
-            // DOM Meta Tag Updates
-            setMetaAttribute('ogTitle', 'content', fullTitle);
+            // Open Graph Tags Update
+            setMetaAttribute('ogTitle', 'content', product.name);
             setMetaAttribute('ogDescription', 'content', description);
             setMetaAttribute('ogImage', 'content', image);
             setMetaAttribute('ogUrl', 'content', currentUrl);
             setMetaAttribute('ogType', 'content', 'product');
 
-            setMetaAttribute('twTitle', 'content', fullTitle);
+            // Twitter Card Tags Update
+            setMetaAttribute('twTitle', 'content', product.name);
             setMetaAttribute('twDescription', 'content', description);
             setMetaAttribute('twImage', 'content', image);
         }
@@ -243,6 +257,7 @@
 
             cardContainer.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                    <!-- Image Gallery Column -->
                     <div class="space-y-4">
                         <div class="rounded-3xl overflow-hidden bg-slate-100 border border-slate-200/80 relative shadow-inner">
                             <img id="mainDisplayImage" src="${product.coverImage}" alt="${product.name}" class="w-full h-80 sm:h-96 object-cover transition-opacity duration-300">
@@ -257,6 +272,7 @@
                         ` : ''}
                     </div>
 
+                    <!-- Details & Description Column -->
                     <div class="space-y-6">
                         <div class="flex items-center gap-3">
                             <span class="bg-blue-50 text-brandBlue text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">${product.category}</span>
@@ -294,7 +310,9 @@
 
         function changeMainImage(imgUrl) {
             const mainImg = document.getElementById('mainDisplayImage');
-            if (mainImg) mainImg.src = imgUrl;
+            if (mainImg) {
+                mainImg.src = imgUrl;
+            }
         }
 
         function renderRelatedProducts(currentProduct) {
@@ -303,6 +321,7 @@
             
             let list = productsDatabase.filter(p => relatedIds.includes(p.id) && p.id !== currentProduct.id);
 
+            // If no specific related IDs were specified, grab other items from the same category
             if (list.length === 0) {
                 list = productsDatabase.filter(p => p.id !== currentProduct.id).slice(0, 4);
             }
@@ -357,13 +376,6 @@
                     <a href="index.html" class="inline-block bg-brandBlue text-white text-xs font-bold px-5 py-2.5 rounded-xl">Return to Shop</a>
                 </div>
             `;
-        }
-
-        // Run setup immediately on script load & on DOMContentLoaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initProductPage);
-        } else {
-            initProductPage();
         }
     </script>
 </body>
