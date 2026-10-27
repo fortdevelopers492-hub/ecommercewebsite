@@ -62,8 +62,8 @@
 
     <!-- Top Announcement Bar -->
     <div class="gradient-bg text-white text-xs sm:text-sm py-2 px-4 text-center font-medium flex justify-between items-center">
-        <span class="hidden md:inline">⚡ FREE nationwide delivery on orders above ₦100,000![cite: 1]</span>
-        <span class="mx-auto md:mx-0">🎁 Earn 10 Loyalty Points for every ₦1,000 spent![cite: 1]</span>
+        <span class="hidden md:inline">⚡ FREE nationwide delivery on orders above ₦100,000!</span>
+        <span class="mx-auto md:mx-0">🎁 Earn 10 Loyalty Points for every ₦1,000 spent!</span>
         <div class="flex items-center gap-4">
             <!-- Currency Switcher -->
             <div class="flex items-center gap-1 bg-white/25 backdrop-blur-md px-2 py-0.5 rounded text-white text-xs">
@@ -95,7 +95,7 @@
             <!-- Search Bar with Live Autocomplete -->
             <div class="flex-1 max-w-xl relative hidden md:block">
                 <div class="relative">
-                    <input type="text" id="searchInput" placeholder="Search 5,000+ premium products...[cite: 1]" 
+                    <input type="text" id="searchInput" placeholder="Search 5,000+ premium products..." 
                         oninput="handleSearchInput(this.value)"
                         onfocus="showSearchDropdown()"
                         class="w-full bg-slate-100 text-slate-800 text-sm rounded-xl pl-10 pr-10 py-2.5 border border-transparent focus:border-brandBlue focus:bg-white focus:outline-none transition-all">
@@ -606,7 +606,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Category</label>
-                        <input type="text" id="adminProdCategory" required placeholder="Audio, Electronics, Smart Home, etc." class="w-full border border-slate-200 rounded-xl p-2 text-xs">
+                        <input type="text" id="adminProdCategory" required placeholder="Audio, Wearables, Gaming, etc." class="w-full border border-slate-200 rounded-xl p-2 text-xs">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Price (NGN ₦)</label>
@@ -706,7 +706,7 @@
                     'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
                     'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=80'
                 ],
-                relatedProductIds: ['prod-2', 'prod-4']
+                relatedProductIds: ['prod-5', 'prod-6', 'prod-20']
             },
             {
                 id: 'prod-2',
@@ -724,7 +724,7 @@
                 additionalImages: [
                     'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
                 ],
-                relatedProductIds: ['prod-1', 'prod-3']
+                relatedProductIds: ['prod-7', 'prod-8', 'prod-3']
             },
             {
                 id: 'prod-3',
@@ -742,7 +742,7 @@
                 additionalImages: [
                     'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80'
                 ],
-                relatedProductIds: ['prod-2', 'prod-4']
+                relatedProductIds: ['prod-9', 'prod-10', 'prod-4']
             },
             {
                 id: 'prod-4',
@@ -758,7 +758,279 @@
                 longDescription: 'Equipped with a 10,000mAh capacity to provide up to 2 full charges for your iPhone or Android device. MagSafe compatible with strong magnet security.',
                 coverImage: 'https://images.unsplash.com/photo-1609592424074-1262f2eb657c?w=800&auto=format&fit=crop&q=80',
                 additionalImages: [],
-                relatedProductIds: ['prod-1', 'prod-2']
+                relatedProductIds: ['prod-11', 'prod-12', 'prod-1']
+            },
+            {
+                id: 'prod-5',
+                slug: 'bose-quietcomfort-ultra-earbuds',
+                name: 'Bose QuietComfort Ultra Earbuds',
+                price: 260000,
+                slashedPrice: 295000,
+                category: 'Audio',
+                rating: 4.8,
+                stock: 15,
+                urgencyBadge: 'Hot Deal',
+                shortDescription: 'Spatialized audio and world-class noise cancellation.',
+                longDescription: 'Breakthrough spatialized audio for more immersive listening. Bose CustomTune technology customizes noise cancellation and sound performance to fit your ears perfectly.',
+                coverImage: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-1', 'prod-6', 'prod-20']
+            },
+            {
+                id: 'prod-6',
+                slug: 'marshall-stanmore-iii-bluetooth-speaker',
+                name: 'Marshall Stanmore III Bluetooth Speaker',
+                price: 340000,
+                slashedPrice: 380000,
+                category: 'Audio',
+                rating: 4.9,
+                stock: 6,
+                urgencyBadge: 'Best Seller',
+                shortDescription: 'Home speaker with expansive sound and icon design.',
+                longDescription: 'Stanmore III has an even wider soundstage than its predecessor, delivering home-filling Marshall signature sound that has been re-engineered for a more immersive experience.',
+                coverImage: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-1', 'prod-5', 'prod-20']
+            },
+            {
+                id: 'prod-7',
+                slug: 'samsung-galaxy-watch-6-classic',
+                name: 'Samsung Galaxy Watch 6 Classic 47mm',
+                price: 320000,
+                slashedPrice: 360000,
+                category: 'Wearables',
+                rating: 4.7,
+                stock: 9,
+                urgencyBadge: null,
+                shortDescription: 'Rotating bezel design with advanced sleep coaching.',
+                longDescription: 'Look your best and see even more with a 20% larger screen. The iconic slim rotating bezel provides seamless navigation across fitness tracking and wellness sensors.',
+                coverImage: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-2', 'prod-8']
+            },
+            {
+                id: 'prod-8',
+                slug: 'garmin-epix-pro-gen-2-sapphire',
+                name: 'Garmin Epix Pro Gen 2 Sapphire Edition',
+                price: 750000,
+                slashedPrice: 820000,
+                category: 'Wearables',
+                rating: 4.9,
+                stock: 4,
+                urgencyBadge: 'Only 3 left!',
+                shortDescription: 'Ultimate multisport GPS smartwatch with AMOLED display.',
+                longDescription: 'Conquer every hour with advanced training features, 24/7 health tracking, and up to 31 days of battery life in smartwatch mode with stunning AMOLED clarity.',
+                coverImage: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-2', 'prod-7']
+            },
+            {
+                id: 'prod-9',
+                slug: 'dell-xps-15-oled-touchscreen-laptop',
+                name: 'Dell XPS 15 OLED Touchscreen Laptop',
+                price: 1450000,
+                slashedPrice: 1600000,
+                category: 'Computers',
+                rating: 4.8,
+                stock: 5,
+                urgencyBadge: 'Hot Deal',
+                shortDescription: '13th Gen Intel Core i7 with 3.5K OLED Display.',
+                longDescription: 'Produce creative work with stunning color precision on an immersive 3.5K OLED touch display powered by dedicated NVIDIA GeForce RTX graphics.',
+                coverImage: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-3', 'prod-10']
+            },
+            {
+                id: 'prod-10',
+                slug: 'asus-rog-zephyrus-g14-gaming-laptop',
+                name: 'ASUS ROG Zephyrus G14 Gaming Laptop',
+                price: 1350000,
+                slashedPrice: 1500000,
+                category: 'Gaming',
+                rating: 4.9,
+                stock: 8,
+                urgencyBadge: 'Best Seller',
+                shortDescription: 'Ultra-portable gaming laptop powered by AMD Ryzen 9.',
+                longDescription: 'Dynamic and ready to travel, the pioneering ROG Zephyrus G14 brings gaming muscle to a lightweight chassis with high-refresh ROG Nebula display.',
+                coverImage: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-3', 'prod-9', 'prod-15']
+            },
+            {
+                id: 'prod-11',
+                slug: 'logitech-mx-master-3s-wireless-mouse',
+                name: 'Logitech MX Master 3S Wireless Mouse',
+                price: 85000,
+                slashedPrice: 100000,
+                category: 'Accessories',
+                rating: 4.9,
+                stock: 20,
+                urgencyBadge: 'Best Seller',
+                shortDescription: 'Quiet clicks and 8K DPI any-surface tracking.',
+                longDescription: 'An iconic mouse remastered. Experience tactile Quiet Clicks and an 8,000 DPI track-on-glass sensor with MagSpeed electromagnetic scrolling.',
+                coverImage: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-12', 'prod-4']
+            },
+            {
+                id: 'prod-12',
+                slug: 'keychron-q1-pro-wireless-mechanical-keyboard',
+                name: 'Keychron Q1 Pro Wireless Mechanical Keyboard',
+                price: 140000,
+                slashedPrice: 165000,
+                category: 'Accessories',
+                rating: 4.8,
+                stock: 10,
+                urgencyBadge: null,
+                shortDescription: 'QMK/VIA wireless custom mechanical keyboard.',
+                longDescription: 'Full aluminum CNC machined body, double-gasket design, and wireless connectivity. Customizable for maximum typing comfort and tactile delight.',
+                coverImage: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-11', 'prod-4']
+            },
+            {
+                id: 'prod-13',
+                slug: 'sony-playstation-5-slim-console',
+                name: 'Sony PlayStation 5 Slim Digital Console',
+                price: 580000,
+                slashedPrice: 630000,
+                category: 'Gaming',
+                rating: 4.9,
+                stock: 14,
+                urgencyBadge: 'Best Seller',
+                shortDescription: 'Next-gen gaming with ultra-high speed SSD.',
+                longDescription: 'Experience lightning fast loading with an ultra-high speed SSD, deeper immersion with support for haptic feedback, adaptive triggers, and 3D Audio.',
+                coverImage: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-14', 'prod-15', 'prod-10']
+            },
+            {
+                id: 'prod-14',
+                slug: 'xbox-series-x-1tb-console',
+                name: 'Xbox Series X 1TB Console',
+                price: 560000,
+                slashedPrice: 610000,
+                category: 'Gaming',
+                rating: 4.8,
+                stock: 11,
+                urgencyBadge: null,
+                shortDescription: 'The fastest, most powerful Xbox ever built.',
+                longDescription: 'Explore rich new worlds with 12 teraflops of raw graphic processing power, DirectX ray tracing, custom SSD, and 4K gaming at up to 120 FPS.',
+                coverImage: 'https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-13', 'prod-15']
+            },
+            {
+                id: 'prod-15',
+                slug: 'nintendo-switch-oled-model',
+                name: 'Nintendo Switch OLED Model - White',
+                price: 310000,
+                slashedPrice: 350000,
+                category: 'Gaming',
+                rating: 4.8,
+                stock: 18,
+                urgencyBadge: 'Hot Deal',
+                shortDescription: 'Vibrant 7-inch OLED screen with wide adjustable stand.',
+                longDescription: 'Feast your eyes on vivid colors and crisp contrast when you play on the go. Features enhanced audio, 64 GB internal storage, and a wired LAN dock.',
+                coverImage: 'https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-13', 'prod-14']
+            },
+            {
+                id: 'prod-16',
+                slug: 'dyson-v15-detect-cordless-vacuum',
+                name: 'Dyson V15 Detect Cordless Vacuum',
+                price: 680000,
+                slashedPrice: 750000,
+                category: 'Smart Home',
+                rating: 4.9,
+                stock: 4,
+                urgencyBadge: 'Only 3 left!',
+                shortDescription: 'Intelligent cordless vacuum with laser particle detection.',
+                longDescription: 'Laser reveals invisible dust on hard floors. A piezo sensor continuously sizes and counts dust particles – automatically increasing suction power when needed.',
+                coverImage: 'https://images.unsplash.com/photo-1558317374-067fb5f30001?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-17', 'prod-18']
+            },
+            {
+                id: 'prod-17',
+                slug: 'philips-hue-starter-kit-smart-light',
+                name: 'Philips Hue White & Color Ambiance Starter Kit',
+                price: 135000,
+                slashedPrice: 155000,
+                category: 'Smart Home',
+                rating: 4.7,
+                stock: 16,
+                urgencyBadge: null,
+                shortDescription: 'Smart illumination with 16 million customizable colors.',
+                longDescription: 'Transform your home lighting experience. Sync lights with music, games, and movies, control remotely via smart assistants, and set automated routines.',
+                coverImage: 'https://images.unsplash.com/photo-1550985616-10810253b84d?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-16', 'prod-18']
+            },
+            {
+                id: 'prod-18',
+                slug: 'google-nest-learning-thermostat-4th-gen',
+                name: 'Google Nest Learning Thermostat (4th Gen)',
+                price: 195000,
+                slashedPrice: 220000,
+                category: 'Smart Home',
+                rating: 4.8,
+                stock: 8,
+                urgencyBadge: 'Hot Deal',
+                shortDescription: 'Energy-saving smart thermostat that learns your schedule.',
+                longDescription: 'Programs itself based on your daily routine to help save energy. Features a sleek borderless display and seamless integration with smart home setups.',
+                coverImage: 'https://images.unsplash.com/photo-1567690187548-f07b1d7bf5a9?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-16', 'prod-17']
+            },
+            {
+                id: 'prod-19',
+                slug: 'canon-eos-r6-mark-ii-mirrorless-camera',
+                name: 'Canon EOS R6 Mark II Mirrorless Camera',
+                price: 2100000,
+                slashedPrice: 2300000,
+                category: 'Photography',
+                rating: 4.9,
+                stock: 3,
+                urgencyBadge: 'Only 3 left!',
+                shortDescription: 'Full-frame 24.2MP sensor with 40 fps continuous shooting.',
+                longDescription: 'Master photography and filmmaking with continuous high-speed shooting up to 40 fps, Dual Pixel CMOS AF II autofocus tracking, and uncropped 4K 60p video recording.',
+                coverImage: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-21', 'prod-3']
+            },
+            {
+                id: 'prod-20',
+                slug: 'dji-mini-4-pro-drone-fly-more-combo',
+                name: 'DJI Mini 4 Pro Drone (Fly More Combo)',
+                price: 890000,
+                slashedPrice: 980000,
+                category: 'Photography',
+                rating: 4.9,
+                stock: 7,
+                urgencyBadge: 'Best Seller',
+                shortDescription: 'Mini foldable drone with 4K/60fps HDR video.',
+                longDescription: 'Under 249g lightweight drone with omnidirectional obstacle sensing, 34-min flight time, flagship DJI O4 video transmission, and true vertical video shooting.',
+                coverImage: 'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-19', 'prod-21']
+            },
+            {
+                id: 'prod-21',
+                slug: 'gopro-hero-12-black-action-camera',
+                name: 'GoPro HERO12 Black Action Camera',
+                price: 360000,
+                slashedPrice: 410000,
+                category: 'Photography',
+                rating: 4.8,
+                stock: 12,
+                urgencyBadge: 'Hot Deal',
+                shortDescription: 'Rugged waterproof camera with HyperSmooth 6.0 stabilization.',
+                longDescription: 'Incredible 5.3K video resolution, HDR imaging for both photos and video, HyperSmooth 6.0 stabilization, and dual screen previews for content creators.',
+                coverImage: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80',
+                additionalImages: [],
+                relatedProductIds: ['prod-19', 'prod-20']
             }
         ];
 
