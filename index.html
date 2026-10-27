@@ -62,8 +62,8 @@
 
     <!-- Top Announcement Bar -->
     <div class="gradient-bg text-white text-xs sm:text-sm py-2 px-4 text-center font-medium flex justify-between items-center">
-        <span class="hidden md:inline">⚡ FREE nationwide delivery on orders above ₦100,000!</span>
-        <span class="mx-auto md:mx-0">🎁 Earn 10 Loyalty Points for every ₦1,000 spent!</span>
+        <span class="hidden md:inline">⚡ FREE nationwide delivery on orders above ₦100,000![cite: 1]</span>
+        <span class="mx-auto md:mx-0">🎁 Earn 10 Loyalty Points for every ₦1,000 spent![cite: 1]</span>
         <div class="flex items-center gap-4">
             <!-- Currency Switcher -->
             <div class="flex items-center gap-1 bg-white/25 backdrop-blur-md px-2 py-0.5 rounded text-white text-xs">
@@ -95,7 +95,7 @@
             <!-- Search Bar with Live Autocomplete -->
             <div class="flex-1 max-w-xl relative hidden md:block">
                 <div class="relative">
-                    <input type="text" id="searchInput" placeholder="Search 5,000+ premium products..." 
+                    <input type="text" id="searchInput" placeholder="Search 5,000+ premium products...[cite: 1]" 
                         oninput="handleSearchInput(this.value)"
                         onfocus="showSearchDropdown()"
                         class="w-full bg-slate-100 text-slate-800 text-sm rounded-xl pl-10 pr-10 py-2.5 border border-transparent focus:border-brandBlue focus:bg-white focus:outline-none transition-all">
@@ -1051,23 +1051,35 @@
             'Other': 5500
         };
 
-        // Application State
-        let productsDatabase = JSON.parse(localStorage.getItem('fm_products')) || DEFAULT_PRODUCTS;
-        let registeredUsers = JSON.parse(localStorage.getItem('fm_users')) || [
+        // Standard Default Accounts List (Exactly 2 Accounts)
+        const DEFAULT_USERS = [
             {
-                name: 'Fort Developer',
+                name: 'Admin User',
                 email: 'fortdevelopers492@gmail.com',
-                password: 'adminpassword123',
+                password: 'Fortmart492#',
                 role: 'admin',
-                loyaltyPoints: 350,
+                loyaltyPoints: 1000,
                 address: { state: 'Lagos', street: '14 Admiralty Way, VI' },
                 orders: [
                     { id: 'FM-883920', date: '2026-03-15', total: 285000, status: 'Delivered' }
                 ]
+            },
+            {
+                name: 'Sarah User',
+                email: 'sarah@gmail.com',
+                password: 'Sarah123!',
+                role: 'customer',
+                loyaltyPoints: 150,
+                address: { state: 'Abuja', street: 'Gwarinpa Estate' },
+                orders: []
             }
         ];
+
+        // Application State
+        let productsDatabase = JSON.parse(localStorage.getItem('fm_products')) || DEFAULT_PRODUCTS;
+        let registeredUsers = JSON.parse(localStorage.getItem('fm_users')) || DEFAULT_USERS;
         let orderDatabase = JSON.parse(localStorage.getItem('fm_orders')) || [
-            { id: 'FM-883920', customerEmail: 'fortdevelopers492@gmail.com', name: 'Fort Developer', total: 285000, status: 'Delivered', date: '2026-03-15' }
+            { id: 'FM-883920', customerEmail: 'fortdevelopers492@gmail.com', name: 'Admin User', total: 285000, status: 'Delivered', date: '2026-03-15' }
         ];
 
         let cart = JSON.parse(localStorage.getItem('fm_cart')) || [];
@@ -1118,14 +1130,12 @@
                 if (!activeUser || activeUser.role !== 'admin') {
                     openAuthModal();
                     navigateTo('home');
-                    showToast('Admin login required: fortdevelopers492@gmail.com / adminpassword123', 'error');
                 } else {
                     renderAdminProducts();
                 }
             }
         }
 
-        // UPDATED: Product click function opens product.html?product={{name}}&id={{id}}
         function openProductPage(productId) {
             const product = productsDatabase.find(p => p.id === productId);
             if (!product) return;
@@ -1527,7 +1537,7 @@
         }
 
         /* ==========================================================================
-           7. USER AUTHENTICATION & OTP SIMULATION WORKFLOW
+           7. USER AUTHENTICATION & EXACT SPECIFIED TOAST LOGIC WORKFLOW
            ========================================================================== */
 
         function openAuthModal() {
@@ -1554,17 +1564,23 @@
             const email = document.getElementById('loginEmail').value.trim();
             const pass = document.getElementById('loginPassword').value.trim();
 
-            const user = registeredUsers.find(u => u.email === email && u.password === pass);
+            const existingUser = registeredUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-            if (user) {
-                activeUser = user;
-                saveStateToStorage();
-                renderUserHeader();
-                closeAuthModal();
-                showToast(`Welcome back, ${user.name}!`, 'success');
-            } else {
-                showToast('Invalid email or password', 'error');
+            if (!existingUser) {
+                showToast('email not registered sign up', 'error');
+                return;
             }
+
+            if (existingUser.password !== pass) {
+                showToast('wrong password', 'error');
+                return;
+            }
+
+            activeUser = existingUser;
+            saveStateToStorage();
+            renderUserHeader();
+            closeAuthModal();
+            showToast(`Welcome back, ${existingUser.name}!`, 'success');
         }
 
         function handleUserSignupInitiate(e) {
@@ -1573,7 +1589,7 @@
             const email = document.getElementById('signupEmail').value.trim();
             const pass = document.getElementById('signupPassword').value.trim();
 
-            if (registeredUsers.some(u => u.email === email)) {
+            if (registeredUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
                 showToast('Email address is already registered.', 'error');
                 return;
             }
